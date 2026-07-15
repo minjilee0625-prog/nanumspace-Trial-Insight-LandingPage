@@ -1816,11 +1816,13 @@ html body .feat-visual.feat-icon-pair { flex-direction: row !important; justify-
     var section = typeof target === 'string' ? document.getElementById(target) : target;
     if (!section) return;
     var behavior = !reducedMotion.matches && supportsSmoothScroll ? 'smooth' : 'auto';
-    try {
-      section.scrollIntoView({ block: 'start', behavior: behavior });
-    } catch (error) {
-      window.scrollTo(0, Math.round(section.getBoundingClientRect().top + window.pageYOffset));
-    }
+    /* scroll-snap-type과의 충돌 방지: 스크롤 중 snap 일시 비활성 */
+    document.documentElement.style.scrollSnapType = 'none';
+    var top = Math.round(section.getBoundingClientRect().top + window.pageYOffset);
+    window.scrollTo({ top: top, behavior: behavior });
+    setTimeout(function() {
+      document.documentElement.style.scrollSnapType = '';
+    }, behavior === 'smooth' ? 900 : 0);
   };
 
   window.tiScrollTop = function() {
@@ -2207,7 +2209,7 @@ window.addEventListener('scroll', function() {
       if (!desktopCarousel.matches || reducedMotion.matches) return;
       if (e.ctrlKey || e.metaKey || e.altKey || e.shiftKey) return;
       /* CSS snap으로 FCC가 제자리일 때만 캐러셀을 제어한다. */
-      if (Math.abs(rect.top) > Math.max(80, window.innerHeight * 0.12)) return;
+      if (Math.abs(rect.top) > Math.max(150, window.innerHeight * 0.25)) return;
 
       var dy = normalizedWheelDelta(e);
       if (!dy) return;
@@ -2249,8 +2251,64 @@ window.addEventListener('scroll', function() {
   }
 })();
 
-/* 일반 섹션은 CSS scroll-snap과 브라우저의 기본 휠 스크롤에 맡긴다.
-   전역 preventDefault는 윈도우 마우스 휠·고배율 화면에서 스크롤을 멈추게 할 수 있다. */
+/* ── 전체 섹션 휠 핸들러 (Mac 트랙패드 + Windows 마우스 크로스 플랫폼) ── */
+(function() {
+  var SECS = Array.prototype.slice.call(
+    document.querySelectorAll('#hero, #why, #features, #benefits, #faq, .cta-footer-wrap')
+  );
+  var fccEl = document.querySelector('#features');
+  var busy = false;
+  var acc = 0;
+  var accTimer = null;
+
+  function norm(e) {
+    var d = e.deltaY;
+    if (e.deltaMode === 1) d *= 40;
+    else if (e.deltaMode === 2) d *= window.innerHeight;
+    return d;
+  }
+
+  function curIdx() {
+    var best = 0, bestD = Infinity;
+    SECS.forEach(function(s, i) {
+      var d = Math.abs(s.getBoundingClientRect().top);
+      if (d < bestD) { bestD = d; best = i; }
+    });
+    return best;
+  }
+
+  document.addEventListener('wheel', function(e) {
+    /* FCC가 뷰에 있으면 FCC 핸들러가 처리 */
+    if (fccEl && Math.abs(fccEl.getBoundingClientRect().top) <= Math.max(150, window.innerHeight * 0.25)) return;
+    /* 수정자 키 + 핀치줌 제외 */
+    if (e.ctrlKey || e.metaKey) return;
+
+    var d = norm(e);
+    if (!d) return;
+
+    acc += d;
+    clearTimeout(accTimer);
+    accTimer = setTimeout(function() { acc = 0; }, 120);
+
+    /* 임계값 미만 — 작은 delta는 차단하되 preventDefault로 snap 충돌 방지 */
+    if (Math.abs(acc) < 36 || busy) {
+      if (busy || Math.abs(acc) >= 10) e.preventDefault();
+      return;
+    }
+
+    e.preventDefault();
+    var dir = acc > 0 ? 1 : -1;
+    acc = 0;
+    busy = true;
+
+    var ci = curIdx();
+    var ni = Math.max(0, Math.min(SECS.length - 1, ci + dir));
+    if (ni !== ci) {
+      window.tiScrollTo(SECS[ni]);
+    }
+    setTimeout(function() { busy = false; }, 950);
+  }, { passive: false });
+})();
 
 /* ── 3D Gear Icon ── */
 (function() {
