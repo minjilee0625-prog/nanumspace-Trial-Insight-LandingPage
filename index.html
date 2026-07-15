@@ -48,7 +48,12 @@ html { scrollbar-width: none; -ms-overflow-style: none; }
   --font: 'Pretendard', -apple-system, 'Apple SD Gothic Neo', sans-serif;
 }
 
-html { scroll-behavior: smooth; background: #080f1e; scroll-snap-type: y mandatory; overscroll-behavior: none; }
+html {
+  scroll-behavior: smooth;
+  background: #080f1e;
+  scroll-snap-type: y mandatory;
+  overscroll-behavior-y: contain;
+}
 body {
   background: var(--bg);
   color: var(--text);
@@ -136,7 +141,7 @@ nav.nav-scrolled:not(.nav-light-theme) .nav-links a { color: rgba(255,255,255,0.
 
 /* ─── HERO ─────────────────────────────────── */
 .hero {
-  position: relative; height: 100vh;
+  position: relative; height: 100vh; height: 100dvh;
   display: flex; align-items: center;
   overflow: hidden;
   background: linear-gradient(to bottom, #080f1e 0%, #112147 30%, #2d5f8a 100%);
@@ -363,7 +368,7 @@ nav.nav-scrolled:not(.nav-light-theme) .nav-links a { color: rgba(255,255,255,0.
 .why-section {
   background: radial-gradient(ellipse 100% 15% at 50% 0%, rgba(0,185,255,0.12) 0%, transparent 100%), linear-gradient(145deg, #EBF4FF 0%, #F6FAFF 55%, #FAFCFF 100%);
   text-align: center; position: relative; overflow: hidden;
-  min-height: 100vh; display: flex; flex-direction: column; justify-content: center;
+  min-height: 100vh; min-height: 100dvh; display: flex; flex-direction: column; justify-content: center;
   scroll-snap-align: start;
   padding-top: 80px; box-sizing: border-box;
 }
@@ -416,7 +421,7 @@ nav.nav-scrolled:not(.nav-light-theme) .nav-links a { color: rgba(255,255,255,0.
 .benefits-section {
   background: #FFFFFF;
   text-align: left; position: relative; overflow: hidden;
-  min-height: 100vh; display: flex; flex-direction: column; justify-content: center;
+  min-height: 100vh; min-height: 100dvh; display: flex; flex-direction: column; justify-content: center;
   scroll-snap-align: start;
 }
 .benefits-section::before, .benefits-section::after { display: none; }
@@ -456,7 +461,7 @@ nav.nav-scrolled:not(.nav-light-theme) .nav-links a { color: rgba(255,255,255,0.
 .features-section {
   background: linear-gradient(165deg, #E9EFF8 0%, #F2F7FC 55%, #F9FAFB 100%);
   position: relative;
-  min-height: 100vh; display: flex; flex-direction: column; justify-content: center;
+  min-height: 100vh; min-height: 100dvh; display: flex; flex-direction: column; justify-content: center;
   box-sizing: border-box;
   scroll-snap-align: start;
 }
@@ -1008,7 +1013,7 @@ footer {
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation: none !important; transition: none !important; }
   .fade-in { opacity: 1; transform: none; }
-  html { scroll-snap-type: none; }
+  html { scroll-behavior: auto; scroll-snap-type: none; }
 }
 
 /* 데스크탑 전용 */
@@ -1053,7 +1058,7 @@ html body .feat-visual.feat-icon-pair { flex-direction: row !important; justify-
 /* ─── FEATURES CAROUSEL (FCC) ────────────────── */
 .fcc-section {
   background: #fff;
-  min-height: 100vh;
+  min-height: 100vh; min-height: 100dvh;
   position: relative;
   overflow: hidden;
   display: flex;
@@ -1207,20 +1212,20 @@ html body .feat-visual.feat-icon-pair { flex-direction: row !important; justify-
     <img src="logo/ti-logo-typo-white.png" alt="Trial Insight" style="height:42px; width:auto;">
   </a>
   <ul class="nav-links">
-    <li><a href="#why" onclick="event.preventDefault();document.getElementById('why').scrollIntoView({behavior:'smooth'});">제품 소개</a></li>
-    <li><a href="#features" onclick="event.preventDefault();document.getElementById('features').scrollIntoView({behavior:'smooth'});">핵심 기능</a></li>
-    <li><a href="#benefits" onclick="event.preventDefault();document.getElementById('benefits').scrollIntoView({behavior:'smooth'});">기대 효과</a></li>
-    <li><a href="#faq" onclick="event.preventDefault();document.getElementById('faq').scrollIntoView({behavior:'smooth'});">FAQ</a></li>
+    <li><a href="#why" onclick="event.preventDefault();window.tiScrollTo('why');">제품 소개</a></li>
+    <li><a href="#features" onclick="event.preventDefault();window.tiScrollTo('features');">핵심 기능</a></li>
+    <li><a href="#benefits" onclick="event.preventDefault();window.tiScrollTo('benefits');">기대 효과</a></li>
+    <li><a href="#faq" onclick="event.preventDefault();window.tiScrollTo('faq');">FAQ</a></li>
   </ul>
   <button class="nav-hamburger" onclick="this.classList.toggle('open');document.getElementById('mobile-menu').classList.toggle('open')" aria-label="메뉴">
     <span></span><span></span><span></span>
   </button>
 </nav>
 <div id="mobile-menu">
-  <a href="#why" onclick="event.preventDefault();document.getElementById('mobile-menu').classList.remove('open');document.querySelector('.nav-hamburger').classList.remove('open');document.getElementById('why').scrollIntoView({behavior:'smooth'});">제품 소개</a>
-  <a href="#features" onclick="event.preventDefault();document.getElementById('mobile-menu').classList.remove('open');document.querySelector('.nav-hamburger').classList.remove('open');document.getElementById('features').scrollIntoView({behavior:'smooth'});">핵심 기능</a>
-  <a href="#benefits" onclick="event.preventDefault();document.getElementById('mobile-menu').classList.remove('open');document.querySelector('.nav-hamburger').classList.remove('open');document.getElementById('benefits').scrollIntoView({behavior:'smooth'});">기대 효과</a>
-  <a href="#faq" onclick="event.preventDefault();document.getElementById('mobile-menu').classList.remove('open');document.querySelector('.nav-hamburger').classList.remove('open');document.getElementById('faq').scrollIntoView({behavior:'smooth'});">FAQ</a>
+  <a href="#why" onclick="event.preventDefault();document.getElementById('mobile-menu').classList.remove('open');document.querySelector('.nav-hamburger').classList.remove('open');window.tiScrollTo('why');">제품 소개</a>
+  <a href="#features" onclick="event.preventDefault();document.getElementById('mobile-menu').classList.remove('open');document.querySelector('.nav-hamburger').classList.remove('open');window.tiScrollTo('features');">핵심 기능</a>
+  <a href="#benefits" onclick="event.preventDefault();document.getElementById('mobile-menu').classList.remove('open');document.querySelector('.nav-hamburger').classList.remove('open');window.tiScrollTo('benefits');">기대 효과</a>
+  <a href="#faq" onclick="event.preventDefault();document.getElementById('mobile-menu').classList.remove('open');document.querySelector('.nav-hamburger').classList.remove('open');window.tiScrollTo('faq');">FAQ</a>
 </div>
 
 <nav class="section-nav">
@@ -1295,7 +1300,7 @@ html body .feat-visual.feat-icon-pair { flex-direction: row !important; justify-
   </div>
 
   <!-- 스크롤 유도 화살표 -->
-  <a href="#why" onclick="event.preventDefault();document.getElementById('why').scrollIntoView({behavior:'smooth'});" class="hero-arrow" style="position:absolute;bottom:2rem;left:50%;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;gap:0rem;text-decoration:none;opacity:0.85;z-index:10;">
+  <a href="#why" onclick="event.preventDefault();window.tiScrollTo('why');" class="hero-arrow" style="position:absolute;bottom:2rem;left:50%;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;gap:0rem;text-decoration:none;opacity:0.85;z-index:10;">
     <svg width="78" height="30" viewBox="0 0 52 20" fill="none"><path d="M4 4L26 16L48 4" stroke="#7DC8F0" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
   </a>
 </section>
@@ -1671,7 +1676,7 @@ html body .feat-visual.feat-icon-pair { flex-direction: row !important; justify-
 
 <!-- CTA + FOOTER WRAPPER -->
 <!-- FAQ -->
-<section id="faq" style="background:linear-gradient(160deg,#EBF4FF 0%,#F6FAFF 55%,#FAFCFF 100%); padding:5rem 1.5rem; padding-top:calc(5rem + 80px); position:relative; overflow:hidden; scroll-snap-align:start; min-height:100vh; display:flex; flex-direction:column; justify-content:center; box-sizing:border-box;">
+<section id="faq" style="background:linear-gradient(160deg,#EBF4FF 0%,#F6FAFF 55%,#FAFCFF 100%); padding:5rem 1.5rem; padding-top:calc(5rem + 80px); position:relative; overflow:hidden; scroll-snap-align:start; min-height:100vh; min-height:100dvh; display:flex; flex-direction:column; justify-content:center; box-sizing:border-box;">
   <img src="icons/icon-search-3d.png" alt="" aria-hidden="true" style="position:absolute; width:300px; height:auto; left:50%; top:8rem; transform:translateX(calc(-50% + 0.7rem)) translateY(0rem); opacity:0.5; pointer-events:none; z-index:0; -webkit-mask-image:linear-gradient(to bottom, rgba(0,0,0,1) 40%, rgba(0,0,0,0) 90%); mask-image:linear-gradient(to bottom, rgba(0,0,0,1) 40%, rgba(0,0,0,0) 90%);">
 
   <div style="width:100%; max-width:800px; margin:0 auto; position:relative; z-index:1; box-sizing:border-box;">
@@ -1725,7 +1730,7 @@ html body .feat-visual.feat-icon-pair { flex-direction: row !important; justify-
   </div>
 </section>
 
-<div class="cta-footer-wrap" style="min-height:100vh; display:flex; flex-direction:column; scroll-snap-align:start;">
+<div class="cta-footer-wrap" style="min-height:100vh; min-height:100dvh; display:flex; flex-direction:column; scroll-snap-align:start;">
 
 <!-- CTA -->
 <section class="cta-section" id="cta" style="flex:1; position:relative; overflow:hidden; min-height:0; padding-top:80px; box-sizing:border-box;">
@@ -1767,7 +1772,7 @@ html body .feat-visual.feat-icon-pair { flex-direction: row !important; justify-
 </div><!-- /CTA + FOOTER WRAPPER -->
 
 <!-- BACK TO TOP -->
-<button id="backToTop" onclick="window.scrollTo({top:0,behavior:'smooth'})" title="맨 위로">
+<button id="backToTop" onclick="window.tiScrollTop()" title="맨 위로">
   <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
     <path d="M4 13L10 7L16 13" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
   </svg>
@@ -1792,6 +1797,30 @@ html body .feat-visual.feat-icon-pair { flex-direction: row !important; justify-
 </style>
 
 <script>
+(function() {
+  var reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+  var supportsSmoothScroll = 'scrollBehavior' in document.documentElement.style;
+
+  window.tiScrollTo = function(target) {
+    var section = typeof target === 'string' ? document.getElementById(target) : target;
+    if (!section) return;
+    var behavior = !reducedMotion.matches && supportsSmoothScroll ? 'smooth' : 'auto';
+    try {
+      section.scrollIntoView({ block: 'start', behavior: behavior });
+    } catch (error) {
+      window.scrollTo(0, Math.round(section.getBoundingClientRect().top + window.pageYOffset));
+    }
+  };
+
+  window.tiScrollTop = function() {
+    if (!reducedMotion.matches && supportsSmoothScroll) {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    } else {
+      window.scrollTo(0, 0);
+    }
+  };
+})();
+
 window.addEventListener('scroll', function() {
   document.getElementById('backToTop').classList.toggle('visible', window.scrollY > 400);
 });
@@ -1802,13 +1831,16 @@ window.addEventListener('scroll', function() {
   const canvas = document.getElementById('hero-canvas');
   if (!canvas) return;
   const ctx = canvas.getContext('2d');
+  const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
   let W, H, nodes;
 
   function init() {
     W = canvas.offsetWidth;
     H = canvas.offsetHeight;
-    canvas.width = W;
-    canvas.height = H;
+    const dpr = Math.min(window.devicePixelRatio || 1, 2);
+    canvas.width = Math.round(W * dpr);
+    canvas.height = Math.round(H * dpr);
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
     nodes = [];
     const count = Math.max(22, Math.min(Math.floor(W * H / 14000), 50));
     for (let i = 0; i < count; i++) {
@@ -1857,7 +1889,7 @@ window.addEventListener('scroll', function() {
       ctx.fill();
     });
 
-    requestAnimationFrame(draw);
+    if (!reducedMotion.matches) requestAnimationFrame(draw);
   }
 
   let resizeTimer;
@@ -1873,10 +1905,16 @@ window.addEventListener('scroll', function() {
   const canvas = document.getElementById('geo-canvas');
   if (!canvas) return;
   const ctx = canvas.getContext('2d');
+  const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+  let W = 0, H = 0;
 
   function resize() {
-    canvas.width = canvas.offsetWidth;
-    canvas.height = canvas.offsetHeight;
+    W = canvas.offsetWidth;
+    H = canvas.offsetHeight;
+    const dpr = Math.min(window.devicePixelRatio || 1, 2);
+    canvas.width = Math.round(W * dpr);
+    canvas.height = Math.round(H * dpr);
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
   }
 
   const phi = (1 + Math.sqrt(5)) / 2;
@@ -1909,7 +1947,6 @@ window.addEventListener('scroll', function() {
   }
 
   function draw() {
-    var W = canvas.width, H = canvas.height;
     var t = Date.now() * 0.00025;
     ctx.clearRect(0, 0, W, H);
 
@@ -1948,7 +1985,7 @@ window.addEventListener('scroll', function() {
       ctx.fill();
     });
 
-    requestAnimationFrame(draw);
+    if (!reducedMotion.matches) requestAnimationFrame(draw);
   }
 
   window.addEventListener('resize', function() { resize(); });
@@ -2137,16 +2174,42 @@ window.addEventListener('scroll', function() {
   var fccSec = document.querySelector('.fcc-section');
   if (fccSec) {
     var wBusy = false;
+    var wheelRemainder = 0;
+    var wheelResetTimer = null;
+    var desktopCarousel = window.matchMedia('(min-width: 1001px) and (any-pointer: fine)');
+    var reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+
+    function normalizedWheelDelta(event) {
+      var delta = event.deltaY;
+      if (event.deltaMode === 1) delta *= 40;
+      else if (event.deltaMode === 2) delta *= window.innerHeight;
+      return delta;
+    }
+
+    function moveToSection(section) {
+      window.tiScrollTo(section);
+    }
+
     document.addEventListener('wheel', function(e) {
       var rect = fccSec.getBoundingClientRect();
-      /* FCC가 뷰포트에 스냅돼 있을 때만 동작 */
-      if (Math.abs(rect.top) > window.innerHeight * 0.5) return;
-      /* FCC 활성 중에는 항상 페이지 스크롤 차단 — scroll-snap 충돌 방지 */
+      /* 세로형 레이아웃과 터치 기기는 브라우저의 기본 스크롤을 사용한다. */
+      if (!desktopCarousel.matches || reducedMotion.matches) return;
+      if (e.ctrlKey || e.metaKey || e.altKey || e.shiftKey) return;
+      /* CSS snap으로 FCC가 제자리일 때만 캐러셀을 제어한다. */
+      if (Math.abs(rect.top) > Math.max(80, window.innerHeight * 0.12)) return;
+
+      var dy = normalizedWheelDelta(e);
+      if (!dy) return;
       e.preventDefault();
-      var dy = e.deltaY;
-      if (e.deltaMode === 1) dy *= 40;
-      else if (e.deltaMode === 2) dy *= window.innerHeight;
-      if (Math.abs(dy) < 5 || wBusy) return;
+
+      /* 트랙패드의 작은 연속 입력과 윈도우 휠의 큰 한 칸 입력을 같은 기준으로 처리한다. */
+      wheelRemainder += dy;
+      clearTimeout(wheelResetTimer);
+      wheelResetTimer = setTimeout(function() { wheelRemainder = 0; }, 120);
+      if (Math.abs(wheelRemainder) < 36 || wBusy) return;
+
+      dy = wheelRemainder;
+      wheelRemainder = 0;
       wBusy = true;
       if (dy > 0) {
         if (cur < total - 1) {
@@ -2154,10 +2217,10 @@ window.addEventListener('scroll', function() {
           goTo(cur + 1);
           setTimeout(function() { wBusy = false; }, 700);
         } else {
-          /* 마지막 슬라이드 → 다음 섹션으로 직접 이동 */
+          /* 마지막 슬라이드 → 다음 섹션 */
           var next = fccSec.nextElementSibling;
-          if (next) next.scrollIntoView({ behavior: 'smooth' });
-          setTimeout(function() { wBusy = false; }, 1200);
+          if (next) moveToSection(next);
+          setTimeout(function() { wBusy = false; }, 700);
         }
       } else {
         if (cur > 0) {
@@ -2165,55 +2228,25 @@ window.addEventListener('scroll', function() {
           goTo(cur - 1);
           setTimeout(function() { wBusy = false; }, 700);
         } else {
-          /* 첫 슬라이드 → 이전 섹션으로 직접 이동 */
+          /* 첫 슬라이드 → 이전 섹션 */
           var prev = fccSec.previousElementSibling;
-          if (prev) prev.scrollIntoView({ behavior: 'smooth' });
-          setTimeout(function() { wBusy = false; }, 1200);
+          if (prev) moveToSection(prev);
+          setTimeout(function() { wBusy = false; }, 700);
         }
       }
     }, { passive: false });
   }
 })();
 
-/* ── 전체 섹션 휠 핸들러 (Windows/크로스 플랫폼 일관성) ── */
-(function() {
-  var secs = Array.prototype.slice.call(
-    document.querySelectorAll('#hero, #why, #features, #benefits, #faq, .cta-footer-wrap')
-  );
-  var fccEl = document.querySelector('#features');
-  var gBusy = false;
-
-  function curIdx() {
-    var best = 0, bestD = Infinity;
-    secs.forEach(function(s, i) {
-      var d = Math.abs(s.getBoundingClientRect().top);
-      if (d < bestD) { bestD = d; best = i; }
-    });
-    return best;
-  }
-
-  document.addEventListener('wheel', function(e) {
-    /* FCC 섹션이 뷰에 있으면 FCC 핸들러에 위임 */
-    if (fccEl && Math.abs(fccEl.getBoundingClientRect().top) <= window.innerHeight * 0.5) return;
-    var dy = e.deltaY;
-    if (e.deltaMode === 1) dy *= 40;
-    else if (e.deltaMode === 2) dy *= window.innerHeight;
-    if (Math.abs(dy) < 5) return;
-    e.preventDefault();
-    if (gBusy) return;
-    gBusy = true;
-    var ci = curIdx();
-    var ni = dy > 0 ? Math.min(ci + 1, secs.length - 1) : Math.max(ci - 1, 0);
-    if (ni !== ci) secs[ni].scrollIntoView({ behavior: 'smooth' });
-    setTimeout(function() { gBusy = false; }, 800);
-  }, { passive: false });
-})();
+/* 일반 섹션은 CSS scroll-snap과 브라우저의 기본 휠 스크롤에 맡긴다.
+   전역 preventDefault는 윈도우 마우스 휠·고배율 화면에서 스크롤을 멈추게 할 수 있다. */
 
 /* ── 3D Gear Icon ── */
 (function() {
   const canvas = document.getElementById('gear-canvas');
   if (!canvas) return;
   const ctx = canvas.getContext('2d');
+  const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
   const dpr = window.devicePixelRatio || 1;
   const W = 104, H = 104;
   canvas.width = W * dpr; canvas.height = H * dpr;
@@ -2311,12 +2344,13 @@ window.addEventListener('scroll', function() {
     draw();
     idleAnimId = requestAnimationFrame(idleLoop);
   }
-  idleAnimId = requestAnimationFrame(idleLoop);
+  if (!reducedMotion.matches) idleAnimId = requestAnimationFrame(idleLoop);
 
   const card = document.getElementById('gear-card');
   if (!card) return;
 
   card.addEventListener('mouseenter', function() {
+    if (reducedMotion.matches) return;
     cancelAnimationFrame(idleAnimId); idleAnimId = null;
     if (animId) return;
     bobFrame = 0;
@@ -2339,6 +2373,7 @@ window.addEventListener('scroll', function() {
   });
 
   card.addEventListener('mouseleave', function() {
+    if (reducedMotion.matches) return;
     cancelAnimationFrame(animId); animId = null;
     cursorBob = 0;
     if (!idleAnimId) idleAnimId = requestAnimationFrame(idleLoop);
@@ -2349,6 +2384,7 @@ window.addEventListener('scroll', function() {
   const canvas = document.getElementById('bolt-canvas');
   if (!canvas) return;
   const ctx = canvas.getContext('2d');
+  const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
   const dpr = window.devicePixelRatio || 1;
   const W = 104, H = 104;
   canvas.width = W * dpr; canvas.height = H * dpr;
@@ -2416,6 +2452,7 @@ window.addEventListener('scroll', function() {
   if (!card) return;
 
   card.addEventListener('mouseenter', function() {
+    if (reducedMotion.matches) return;
     if (animId) return;
     bobFrame = 0;
     function loop() {
@@ -2436,6 +2473,7 @@ window.addEventListener('scroll', function() {
   });
 
   card.addEventListener('mouseleave', function() {
+    if (reducedMotion.matches) return;
     cancelAnimationFrame(animId);
     animId = null;
     bobY = 0;
@@ -2452,7 +2490,7 @@ window.addEventListener('scroll', function() {
     a.addEventListener('click', function(e) {
       e.preventDefault();
       var target = document.getElementById(a.getAttribute('data-section'));
-      if (target) target.scrollIntoView({ behavior: 'smooth' });
+      if (target) window.tiScrollTo(target);
     });
   });
 })();
