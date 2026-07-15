@@ -63,7 +63,7 @@ html {
   /* Windows의 휠 입력을 막지 않도록 부드러운 스냅만 사용한다. */
   scroll-snap-type: y proximity;
 }
-.hero, .why-section, .features-section, .benefits-section, #faq, .cta-footer-wrap {
+.hero, .why-section, .fcc-section, .features-section, .benefits-section, #faq, .cta-footer-wrap {
   scroll-snap-stop: always;
 }
 body {
@@ -1816,13 +1816,52 @@ html body .feat-visual.feat-icon-pair { flex-direction: row !important; justify-
 </style>
 
 <script>
-window.tiScrollTo = function(target) {
-  var section = typeof target === 'string' ? document.getElementById(target) : target;
-  if (section) section.scrollIntoView({ behavior: 'smooth', block: 'start' });
-};
-window.tiScrollTop = function() {
-  window.scrollTo({ top: 0, behavior: 'smooth' });
-};
+(function() {
+  var reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+  var rafId = null;
+
+  function ease(t) { return t < 0.5 ? 4*t*t*t : 1 - Math.pow(-2*t+2, 3)/2; }
+
+  function animateScroll(targetY) {
+    var html = document.documentElement;
+    var startY = window.pageYOffset;
+    if (Math.abs(targetY - startY) < 2) return;
+    if (rafId) { cancelAnimationFrame(rafId); rafId = null; }
+    if (reducedMotion.matches) { window.scrollTo(0, targetY); return; }
+    html.style.scrollSnapType = 'none';
+    html.style.scrollBehavior = 'auto';
+    window._tiScrolling = true;
+    var duration = 1400;
+    var startTime = null;
+    function step(ts) {
+      if (!startTime) startTime = ts;
+      var t = Math.min((ts - startTime) / duration, 1);
+      window.scrollTo(0, startY + (targetY - startY) * ease(t));
+      if (t < 1) {
+        rafId = requestAnimationFrame(step);
+      } else {
+        rafId = null;
+        html.style.scrollSnapType = '';
+        html.style.scrollBehavior = '';
+        /* 애니메이션 완료 후 300ms 유예: 연속 스크롤 입력 차단 */
+        setTimeout(function() { window._tiScrolling = false; }, 300);
+      }
+    }
+    rafId = requestAnimationFrame(step);
+  }
+
+  window.tiScrollTo = function(target) {
+    var section = typeof target === 'string' ? document.getElementById(target) : target;
+    if (!section) return;
+    var targetY = Math.round(section.getBoundingClientRect().top + window.pageYOffset);
+    animateScroll(targetY);
+  };
+
+  window.tiScrollTop = function() {
+    animateScroll(0);
+  };
+})();
+
 window.addEventListener('scroll', function() {
   document.getElementById('backToTop').classList.toggle('visible', window.scrollY > 400);
 });
@@ -2193,6 +2232,9 @@ window.addEventListener('scroll', function() {
       if (!desktopCarousel.matches || reducedMotion.matches) return;
       if (e.ctrlKey || e.metaKey || e.altKey || e.shiftKey) return;
       if (Math.abs(rect.top) > Math.max(150, window.innerHeight * 0.25)) return;
+      /* busy 또는 섹션 이동 중이면 차단 — wheelRemainder 누적도 하지 않음
+         (누적 후 해제 시 다음 슬라이드/섹션으로 튀는 버그 방지) */
+      if (wBusy || window._tiScrolling) { e.preventDefault(); return; }
 
       var dy = normalizedWheelDelta(e);
       if (!dy) return;
@@ -2200,8 +2242,8 @@ window.addEventListener('scroll', function() {
 
       wheelRemainder += dy;
       clearTimeout(wheelResetTimer);
-      wheelResetTimer = setTimeout(function() { wheelRemainder = 0; }, 120);
-      if (Math.abs(wheelRemainder) < 36 || wBusy) return;
+      wheelResetTimer = setTimeout(function() { wheelRemainder = 0; }, 150);
+      if (Math.abs(wheelRemainder) < 50) return;
 
       dy = wheelRemainder;
       wheelRemainder = 0;
@@ -2213,7 +2255,8 @@ window.addEventListener('scroll', function() {
         } else {
           var next = fccSec.nextElementSibling;
           if (next) moveToSection(next);
-          setTimeout(function() { wBusy = false; }, 700);
+          /* 섹션 이동은 1400ms 애니메이션 + 여유 */
+          setTimeout(function() { wBusy = false; }, 1700);
         }
       } else {
         if (cur > 0) {
@@ -2222,26 +2265,62 @@ window.addEventListener('scroll', function() {
         } else {
           var prev = fccSec.previousElementSibling;
           if (prev) moveToSection(prev);
-          setTimeout(function() { wBusy = false; }, 700);
+          setTimeout(function() { wBusy = false; }, 1700);
         }
       }
     }, { passive: false });
   }
 })();
 
-/* ── 뷰포트 비례 확대: 디자인 기준폭 1440px, 넓은 화면에서 비율 통일 ── */
+/* ── 전체 섹션 휠 핸들러 (Mac 트랙패드 + Windows 마우스 크로스 플랫폼) ── */
 (function() {
-  var BASE = 1440;
-  function applyZoom() {
-    var w = window.innerWidth;
-    if (w > BASE) {
-      document.documentElement.style.zoom = String(Math.round((w / BASE) * 1000) / 1000);
-    } else {
-      document.documentElement.style.zoom = '';
-    }
+  var SECS = Array.prototype.slice.call(
+    document.querySelectorAll('#hero, #why, #features, #benefits, #faq, .cta-footer-wrap')
+  );
+  var fccEl = document.querySelector('#features');
+  var busy = false;
+  var acc = 0;
+  var accTimer = null;
+
+  function norm(e) {
+    var d = e.deltaY;
+    if (e.deltaMode === 1) d *= 40;
+    else if (e.deltaMode === 2) d *= window.innerHeight;
+    return d;
   }
-  applyZoom();
-  window.addEventListener('resize', applyZoom);
+
+  function curIdx() {
+    var best = 0, bestD = Infinity;
+    SECS.forEach(function(s, i) {
+      var d = Math.abs(s.getBoundingClientRect().top);
+      if (d < bestD) { bestD = d; best = i; }
+    });
+    return best;
+  }
+
+  document.addEventListener('wheel', function(e) {
+    /* FCC가 뷰에 있으면 FCC 내부 핸들러가 처리 */
+    if (fccEl && Math.abs(fccEl.getBoundingClientRect().top) <= Math.max(150, window.innerHeight * 0.25)) return;
+    if (e.ctrlKey || e.metaKey) return;
+    var d = norm(e);
+    if (!d) return;
+    /* 애니메이션 진행 중이거나 busy이면 차단만 하고 acc 누적은 하지 않음
+       (누적 후 해제 시 다음 섹션으로 또 튀는 버그 방지) */
+    if (busy || window._tiScrolling) { e.preventDefault(); return; }
+    acc += d;
+    clearTimeout(accTimer);
+    accTimer = setTimeout(function() { acc = 0; }, 150);
+    if (Math.abs(acc) < 50) return;
+    e.preventDefault();
+    var dir = acc > 0 ? 1 : -1;
+    acc = 0;
+    busy = true;
+    var ci = curIdx();
+    var ni = Math.max(0, Math.min(SECS.length - 1, ci + dir));
+    if (ni !== ci) { window.tiScrollTo(SECS[ni]); }
+    /* 애니메이션(1400ms) + 여유 300ms */
+    setTimeout(function() { busy = false; }, 1700);
+  }, { passive: false });
 })();
 
 /* ── 3D Gear Icon ── */
