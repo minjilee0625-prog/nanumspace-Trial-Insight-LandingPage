@@ -256,7 +256,7 @@ nav.nav-scrolled:not(.nav-light-theme) .nav-links a { color: rgba(255,255,255,0.
   color: #F4F8FC; margin-bottom: 0.75rem;
   text-align: center; width: 100%;
 }
-.hero-headline em { font-style: normal; color: #4BA3DE; font-weight: 800; font-family: 'KBLJumpCondensed', sans-serif; font-size: 0.97em; display: inline-block; position: relative; left: -0.4rem; }
+.hero-headline em { font-style: normal; color: #4BA3DE; font-weight: 800; font-family: 'KBLJumpCondensed', sans-serif; font-size: 0.97em; display: inline-block; position: relative; left: -0.4rem; transform: skewX(-10deg); }
 .hero-line1 { display: block; white-space: nowrap; margin-bottom: 0.25em; }
 .hero-line2 { display: block; white-space: nowrap; }
 .hero-sub-insight {
@@ -273,12 +273,8 @@ nav.nav-scrolled:not(.nav-light-theme) .nav-links a { color: rgba(255,255,255,0.
   from { opacity: 0; transform: translateY(18px); }
   to   { opacity: 1; transform: translateY(0); }
 }
-@keyframes heroLogoEnter {
-  from { opacity: 0; transform: translateY(24px) scale(0.97); }
-  to   { opacity: 1; transform: translateY(0) scale(1); }
-}
 /* nav 페이드인 제거 */
-.hero-headline { animation: heroEnterFade 0.9s cubic-bezier(0.22, 1, 0.36, 1) both; animation-delay: 0.15s; }
+.hero-headline {}
 /* 아이브로우 자리에 겹쳐 나타나는 서브텍스트 */
 .hero-sub-overlay {
   position: absolute;
@@ -300,7 +296,7 @@ nav.nav-scrolled:not(.nav-light-theme) .nav-links a { color: rgba(255,255,255,0.
   font-size: 1em;
   margin-right: 0.3em;
 }
-.hero-logo-right { animation: heroLogoEnter 1s cubic-bezier(0.22, 1, 0.36, 1) both; animation-delay: 1.05s; }
+.hero-logo-right {}
 .hero-tagline {
   font-size: clamp(1.05rem, 2vw, 1.2rem); font-weight: 600;
   color: rgba(168,212,240,0.75); letter-spacing: -0.01em;
